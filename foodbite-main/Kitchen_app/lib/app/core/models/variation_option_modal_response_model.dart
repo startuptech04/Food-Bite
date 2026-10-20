@@ -1,0 +1,39 @@
+/*
+ * FoodBite – Multi Restaurant Food Delivery App
+ * (NodeJS, MongoDB, Angular & Flutter)
+ *
+ * Copyright © 2026 Elitecanyon InfoTech (https://www.elitecanyon.com/)
+ * Licensed under the Envato Market License.
+ *
+ * Unauthorized redistribution, resale, or publication
+ * of this source code on GitHub or any public repository
+ * is strictly prohibited.
+ *
+ * This file may contain embedded identifiers and watermarks
+ * for ownership verification and license enforcement.
+ */
+
+class VariationsOptionModalResponse {
+  bool? action;
+  String? name;
+  String? price;
+  String? stock;
+
+  VariationsOptionModalResponse({this.action, this.name, this.price, this.stock});
+
+  VariationsOptionModalResponse.fromJson(Map<String, dynamic> json) {
+    action = json['action'];
+    name = json['name'];
+    price = json['price'];
+    stock = json['stock'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['action'] = action;
+    data['name'] = name;
+    data['price'] = price;
+    data['stock'] = stock;
+    return data;
+  }
+}

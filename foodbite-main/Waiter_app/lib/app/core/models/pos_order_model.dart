@@ -1,0 +1,605 @@
+/*
+ * FoodBite – Multi Restaurant Food Delivery App
+ * (NodeJS, MongoDB, Angular & Flutter)
+ *
+ * Copyright © 2026 Elitecanyon InfoTech (https://www.elitecanyon.com/)
+ * Licensed under the Envato Market License.
+ *
+ * Unauthorized redistribution, resale, or publication
+ * of this source code on GitHub or any public repository
+ * is strictly prohibited.
+ *
+ * This file may contain embedded identifiers and watermarks
+ * for ownership verification and license enforcement.
+ */
+
+class PosOrderModel {
+  List<FoodCategoriesModel>? main;
+  List<FoodCategoriesModel>? custom;
+  bool? success;
+  final String locale;
+
+  PosOrderModel({this.main, this.custom, this.success, required this.locale});
+
+  PosOrderModel.fromJson(Map<String, dynamic> json, this.locale) {
+    if (json['main'] != null) {
+      main = <FoodCategoriesModel>[];
+      json['main'].forEach((v) {
+        main!.add(FoodCategoriesModel.fromJson(v, locale));
+      });
+    } else {
+      main = [];
+    }
+    if (json['custom'] != null) {
+      custom = <FoodCategoriesModel>[];
+      json['custom'].forEach((v) {
+        custom!.add(FoodCategoriesModel.fromJson(v, locale));
+      });
+    } else {
+      custom = [];
+    }
+    success = json['success'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (main != null) {
+      data['main'] = main!.map((v) => v.toJson()).toList();
+    }
+    if (custom != null) {
+      data['custom'] = custom!.map((v) => v.toJson()).toList();
+    }
+    data['success'] = success;
+    return data;
+  }
+}
+
+class FoodCategoriesModel {
+  List<FoodListModel>? foods;
+  String? categoryId;
+  String? categoryName;
+  List<Translations>? categoryTranslations;
+  bool isOpen = true;
+  final String locale;
+
+  FoodCategoriesModel({this.foods, this.categoryId, this.categoryName, this.categoryTranslations, this.isOpen = true, required this.locale});
+
+  FoodCategoriesModel.fromJson(Map<String, dynamic> json, this.locale) {
+    if (json['foods'] != null) {
+      foods = <FoodListModel>[];
+      json['foods'].forEach((v) {
+        foods!.add(FoodListModel.fromJson(v, locale));
+      });
+    } else {
+      foods = [];
+    }
+    categoryId = json['category_id'];
+    categoryName = json['category_name'];
+    if (json['category_translations'] != null) {
+      categoryTranslations = <Translations>[];
+      json['category_translations'].forEach((v) {
+        categoryTranslations!.add(Translations.fromJson(v));
+      });
+      if (locale.isNotEmpty && categoryTranslations!.isNotEmpty) {
+        final int localeIndex = categoryTranslations!.indexWhere((tLocale) => tLocale.code! == locale);
+        if (localeIndex != -1) {
+          if (categoryTranslations![localeIndex].value!.isNotEmpty) {
+            categoryName = categoryTranslations![localeIndex].value!;
+          }
+        }
+      }
+    } else {
+      categoryTranslations = [];
+    }
+    isOpen = true;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (foods != null) {
+      data['foods'] = foods!.map((v) => v.toJson()).toList();
+    }
+    data['category_id'] = categoryId;
+    data['category_name'] = categoryName;
+    if (categoryTranslations != null) {
+      data['category_translations'] = categoryTranslations!.map((v) => v.toJson()).toList();
+    }
+    data['isOpen'] = true;
+    return data;
+  }
+}
+
+class FoodListModel {
+  String? name;
+  String? shortDescription;
+  String? image;
+  String? foodType;
+  List<AddonModelConfigModel>? addons;
+  String? startTime;
+  String? endTime;
+  double? price;
+  String? discountType;
+  double? discount;
+  double? offerPrice = 0.0;
+  List<VariationConfigModel>? variations;
+  List<FoodTranslations>? translations;
+  int? purchaseLimit;
+  int? quantity;
+  String? cartEntity;
+  String? status;
+  bool? inStock;
+  bool? taxationEnable;
+  List<TaxationConfigModel>? foodtaxations;
+  String? id;
+  int? stockNumber;
+  String? stockType;
+  final String locale;
+
+  FoodListModel({
+    this.name,
+    this.shortDescription,
+    this.image,
+    this.foodType,
+    this.addons,
+    this.startTime,
+    this.endTime,
+    this.price,
+    this.discountType,
+    this.discount,
+    this.offerPrice,
+    this.variations,
+    this.translations,
+    this.purchaseLimit,
+    this.quantity,
+    this.cartEntity,
+    this.status,
+    this.inStock,
+    this.taxationEnable,
+    this.foodtaxations,
+    this.id,
+    this.stockNumber,
+    this.stockType,
+    required this.locale,
+  });
+
+  FoodListModel.fromJson(Map<String, dynamic> json, this.locale) {
+    name = json['name'];
+    shortDescription = json['shortDescription'];
+    image = json['image'];
+    foodType = json['foodType'];
+    if (json['addons'] != null) {
+      addons = <AddonModelConfigModel>[];
+      json['addons'].forEach((v) {
+        addons!.add(AddonModelConfigModel.fromJson(v, locale));
+      });
+    } else {
+      addons = [];
+    }
+    startTime = json['startTime'];
+    endTime = json['endTime'];
+    taxationEnable = json['taxationEnable'];
+    if (json['foodtaxations'] != null) {
+      foodtaxations = <TaxationConfigModel>[];
+      json['foodtaxations'].forEach((v) {
+        foodtaxations!.add(TaxationConfigModel.fromJson(v, locale));
+      });
+    } else {
+      foodtaxations = [];
+    }
+    if (json['price'] != null && json['price'] != '') {
+      price = double.parse(json['price'].toString());
+      if (json['taxationEnable'] != null && json['taxationEnable'] != '' && json['taxationEnable'] == true) {
+        double taxPercentage = 0;
+        if (json['foodtaxations'] != null) {
+          json['foodtaxations'].forEach((v) {
+            TaxationConfigModel taxation = TaxationConfigModel.fromJson(v, locale);
+            taxPercentage = (taxPercentage + taxation.taxAmount!);
+          });
+        }
+        if (taxPercentage > 0) {
+          double basePrice = price!;
+          String finalPriceString = (basePrice + (taxPercentage / 100) * basePrice).toStringAsFixed(2);
+          double finalPrice = double.parse(finalPriceString);
+          price = finalPrice;
+        }
+      }
+    } else {
+      price = 0.0;
+    }
+    discountType = json['discountType'];
+    if (json['discount'] != null && json['discount'] != '') {
+      discount = double.parse(json['discount'].toString());
+      if (discount! > 0) {
+        if (json['discountType'] == '%') {
+          String discountValue = (double.parse(price.toString()) - (double.parse(price.toString()) * double.parse(json['discount'].toString()) / 100)).toStringAsFixed(2);
+          offerPrice = double.parse(discountValue);
+        } else {
+          String discountValue = (double.parse(price.toString()) - double.parse(json['discount'].toString())).toStringAsFixed(2);
+          offerPrice = double.parse(discountValue);
+        }
+      }
+    } else {
+      discount = 0.0;
+      offerPrice = 0.0;
+    }
+    if (json['variations'] != null) {
+      variations = <VariationConfigModel>[];
+      json['variations'].forEach((v) {
+        variations!.add(VariationConfigModel.fromJson(v));
+      });
+    } else {
+      variations = [];
+    }
+    if (json['translations'] != null) {
+      translations = <FoodTranslations>[];
+      json['translations'].forEach((v) {
+        translations!.add(FoodTranslations.fromJson(v));
+      });
+      if (locale.isNotEmpty && translations!.isNotEmpty) {
+        final int localeIndex = translations!.indexWhere((tLocale) => tLocale.code! == locale);
+        if (localeIndex != -1) {
+          if (translations![localeIndex].title!.isNotEmpty) {
+            name = translations![localeIndex].title!;
+          }
+          if (translations![localeIndex].shortDescription!.isNotEmpty) {
+            shortDescription = translations![localeIndex].shortDescription!;
+          }
+        }
+      }
+    } else {
+      translations = [];
+    }
+    if (json['purchaseLimit'] != null && json['purchaseLimit'] != '' && json['purchaseLimit'].toString() != '-1') {
+      purchaseLimit = int.parse(json['purchaseLimit'].toString());
+    } else if (json['purchaseLimit'].toString() == '-1') {
+      purchaseLimit = 1000000000000000;
+    } else {
+      purchaseLimit = 5;
+    }
+    if (json['quantity'] != null && json['quantity'] != '') {
+      quantity = int.parse(json['quantity'].toString());
+    } else {
+      quantity = 0;
+    }
+    if (json['cartEntity'] != null && json['cartEntity'] != '') {
+      cartEntity = json['cartEntity'];
+    } else {
+      cartEntity = 'single';
+    }
+    status = json['status'];
+    inStock = json['inStock'];
+    id = json['id'];
+    if (json['stockNumber'] != null && json['stockNumber'] != '') {
+      stockNumber = int.parse(json['stockNumber'].toString());
+    } else {
+      stockNumber = -1;
+    }
+    stockType = json['stockType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['shortDescription'] = shortDescription;
+    data['image'] = image;
+    data['foodType'] = foodType;
+    data['startTime'] = startTime;
+    data['endTime'] = endTime;
+    data['price'] = price;
+    data['discountType'] = discountType;
+    data['discount'] = discount;
+    data['offerPrice'] = offerPrice;
+    if (addons != null) {
+      data['addons'] = addons!.map((v) => v.toJson()).toList();
+    }
+    if (variations != null) {
+      data['variations'] = variations!.map((v) => v.toJson()).toList();
+    }
+    if (translations != null) {
+      data['translations'] = translations!.map((v) => v.toJson()).toList();
+    }
+    data['purchaseLimit'] = purchaseLimit;
+    data['quantity'] = quantity;
+    data['cartEntity'] = cartEntity;
+    data['status'] = status;
+    data['inStock'] = inStock;
+    data['id'] = id;
+    data['taxationEnable'] = taxationEnable;
+    if (foodtaxations != null) {
+      data['foodtaxations'] = foodtaxations!.map((v) => v.toJson()).toList();
+    }
+    data['stockNumber'] = stockNumber;
+    data['stockType'] = stockType;
+    return data;
+  }
+}
+
+class Translations {
+  String? name;
+  String? code;
+  String? nativeName;
+  String? value;
+
+  Translations({this.name, this.code, this.nativeName, this.value});
+
+  Translations.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    code = json['code'];
+    nativeName = json['nativeName'];
+    value = json['value'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['code'] = code;
+    data['nativeName'] = nativeName;
+    data['value'] = value;
+    return data;
+  }
+}
+
+class AddonModelConfigModel {
+  String? name;
+  List<Translations>? translations;
+  String? id;
+  double? price;
+  bool? inStock;
+  int? stockNumber;
+  String? stockType;
+  final String locale;
+
+  AddonModelConfigModel({this.name, this.translations, this.id, this.price, this.inStock, this.stockNumber, this.stockType, required this.locale});
+
+  AddonModelConfigModel.fromJson(Map<String, dynamic> json, this.locale) {
+    name = json['name'];
+    if (json['translations'] != null) {
+      translations = <Translations>[];
+      json['translations'].forEach((v) {
+        translations!.add(Translations.fromJson(v));
+      });
+      if (locale.isNotEmpty && translations!.isNotEmpty) {
+        final int localeIndex = translations!.indexWhere((tLocale) => tLocale.code! == locale);
+        if (localeIndex != -1) {
+          if (translations![localeIndex].value!.isNotEmpty) {
+            name = translations![localeIndex].value!;
+          }
+        }
+      }
+    } else {
+      translations = [];
+    }
+    id = json['id'];
+    if (json['price'] != null && json['price'] != '') {
+      price = double.parse(json['price'].toString());
+    } else {
+      price = 0.0;
+    }
+    if (json['inStock'] != null && json['inStock'] != '') {
+      inStock = json['inStock'];
+    } else {
+      inStock = true;
+    }
+    if (json['stockNumber'] != null && json['stockNumber'] != '' && json['stockNumber'].toString() != '-1') {
+      stockNumber = int.parse(json['stockNumber'].toString());
+    } else if (json['stockNumber'].toString() == '-1') {
+      stockNumber = 1000000000000000;
+    } else {
+      stockNumber = 5;
+    }
+    if (json['stockType'] != null && json['stockType'] != '') {
+      stockType = json['stockType'];
+    } else {
+      stockType = 'unlimited';
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    if (translations != null) {
+      data['translations'] = translations!.map((v) => v.toJson()).toList();
+    }
+    data['id'] = id;
+    data['price'] = price;
+    data['inStock'] = inStock;
+    data['stockNumber'] = stockNumber;
+    data['stockType'] = stockType;
+    return data;
+  }
+}
+
+class VariationConfigModel {
+  bool? isRequired;
+  String? title;
+  String? type;
+  int? min;
+  int? max;
+  List<VariationOptionConfigModel>? options;
+
+  VariationConfigModel({this.isRequired, this.title, this.type, this.min, this.max, this.options});
+
+  VariationConfigModel.fromJson(Map<String, dynamic> json) {
+    if (json['isRequired'].toString().toLowerCase() == 'true' || json['isRequired'] == true) {
+      isRequired = true;
+    } else {
+      isRequired = false;
+    }
+    title = json['title'];
+    type = json['type'];
+    if (json['min'] != null && json['min'] != '') {
+      min = int.parse(json['min'].toString());
+    } else {
+      min = 1;
+    }
+    if (json['max'] != null && json['max'] != '') {
+      max = int.parse(json['max'].toString());
+    } else {
+      max = 1;
+    }
+    // New Code
+    if (json['min'] == '0') {
+      min = 1;
+    }
+    if (json['max'] == '0') {
+      max = 1;
+    }
+    if (min == 1 && max == 1) {
+      type = 'single';
+    }
+    // New Code
+    if (json['options'] != null) {
+      options = <VariationOptionConfigModel>[];
+      json['options'].forEach((v) {
+        options!.add(VariationOptionConfigModel.fromJson(v));
+      });
+    } else {
+      options = [];
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['isRequired'] = isRequired;
+    data['title'] = title;
+    data['type'] = type;
+    data['min'] = min;
+    data['max'] = max;
+    if (options != null) {
+      data['options'] = options!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class VariationOptionConfigModel {
+  String? name;
+  double? price;
+  int? stock;
+
+  VariationOptionConfigModel({this.name, this.price, this.stock});
+
+  VariationOptionConfigModel.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    if (json['price'] != null && json['price'] != '') {
+      price = double.parse(json['price'].toString());
+    } else {
+      price = 0.0;
+    }
+    if (json['stock'] != null && json['stock'] != '' && json['stock'].toString() != '-1') {
+      stock = int.parse(json['stock'].toString());
+    } else if (json['stock'].toString() == '-1') {
+      stock = 1000000000000000;
+    } else {
+      stock = 5;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['price'] = price;
+    data['stock'] = stock;
+    return data;
+  }
+}
+
+class FoodTranslations {
+  String? name;
+  String? code;
+  String? nativeName;
+  String? title;
+  String? shortDescription;
+
+  FoodTranslations({this.name, this.code, this.nativeName, this.title, this.shortDescription});
+
+  FoodTranslations.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    code = json['code'];
+    nativeName = json['nativeName'];
+    title = json['title'];
+    shortDescription = json['shortDescription'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['code'] = code;
+    data['nativeName'] = nativeName;
+    data['title'] = title;
+    data['shortDescription'] = shortDescription;
+    return data;
+  }
+}
+
+class TaxationConfigModel {
+  String? taxName;
+  List<FoodTaxationTranslation>? translations;
+  String? id;
+  double? taxAmount;
+  final String locale;
+
+  TaxationConfigModel({this.taxName, this.translations, this.id, this.taxAmount, required this.locale});
+
+  TaxationConfigModel.fromJson(Map<String, dynamic> json, this.locale) {
+    taxName = json['taxName'];
+    if (json['translations'] != null) {
+      translations = <FoodTaxationTranslation>[];
+      json['translations'].forEach((v) {
+        translations!.add(FoodTaxationTranslation.fromJson(v));
+      });
+      if (locale.isNotEmpty && translations!.isNotEmpty) {
+        final int localeIndex = translations!.indexWhere((tLocale) => tLocale.code! == locale);
+        if (localeIndex != -1) {
+          if (translations![localeIndex].title!.isNotEmpty) {
+            taxName = translations![localeIndex].title!;
+          }
+        }
+      }
+    } else {
+      translations = [];
+    }
+    id = json['id'];
+    if (json['taxAmount'] != null && json['taxAmount'] != '') {
+      taxAmount = double.parse(json['taxAmount'].toString());
+    } else {
+      taxAmount = 0;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['taxName'] = taxName;
+    if (translations != null) {
+      data['translations'] = translations!.map((v) => v.toJson()).toList();
+    }
+    data['id'] = id;
+    data['taxAmount'] = taxAmount;
+    return data;
+  }
+}
+
+class FoodTaxationTranslation {
+  String? name;
+  String? code;
+  String? nativeName;
+  String? title;
+
+  FoodTaxationTranslation({this.name, this.code, this.nativeName, this.title});
+
+  FoodTaxationTranslation.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    code = json['code'];
+    nativeName = json['nativeName'];
+    title = json['title'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['code'] = code;
+    data['nativeName'] = nativeName;
+    data['title'] = title;
+    return data;
+  }
+}

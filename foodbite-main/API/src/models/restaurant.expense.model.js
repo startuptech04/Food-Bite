@@ -1,0 +1,89 @@
+/**
+ * FoodBite – Multi Restaurant Food Delivery App
+ * (NodeJS, MongoDB, Angular & Flutter)
+ *
+ * Copyright © 2026 Elitecanyon InfoTech (https://www.elitecanyon.com/)
+ * Licensed under the Envato Market License.
+ *
+ * Unauthorized redistribution, resale, or publication
+ * of this source code on GitHub or any public repository
+ * is strictly prohibited.
+ *
+ * Ownership Fingerprint:
+ * FB|RJ|2026|ENVATO|FOODBITE|NODE
+ */
+
+const mongoose = require('mongoose');
+const { toJSON, paginate } = require('./plugins');
+
+const restaurantExpenseSchema = mongoose.Schema(
+  {
+    restaurant: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'Restaurant',
+      required: true,
+    },
+    expenseType: {
+      type: String,
+      required: true,
+      default: 'other', // order_product_discout, pos_order_product_discount, table_order_product_discount, pos_order_extra_discount, table_order_extra_discount, coupon, dining_coupon, dining_booking_discount, refund_order, other
+    },
+    coupon: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'Coupon',
+      required: false,
+    },
+    diningCoupon: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'DiningCoupon',
+      required: false,
+    },
+    diningBooking: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'DiningBooking',
+      required: false,
+    },
+    order: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'Orders',
+      required: false,
+    },
+    posOrder: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'PosOrTableOrder',
+      required: false,
+    },
+    tableOrder: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'TableOrder',
+      required: false,
+    },
+    user: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'User',
+      required: false,
+    },
+    amount: {
+      type: Number,
+      required: false,
+      get: (v) => Number((v / 100).toFixed(2)),
+      set: (v) => Math.round(v * 100),
+      default: 0,
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: { getters: true },
+  }
+);
+
+// add plugin that converts mongoose to json & convert to unique slug
+restaurantExpenseSchema.plugin(toJSON);
+restaurantExpenseSchema.plugin(paginate);
+
+/**
+ * @typedef RestaurantExpense
+ */
+const RestaurantExpense = mongoose.model('RestaurantExpense', restaurantExpenseSchema);
+
+module.exports = RestaurantExpense;

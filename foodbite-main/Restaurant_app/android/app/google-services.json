@@ -1,0 +1,254 @@
+{
+  "project_info": {
+    "project_number": "509150642218",
+    "project_id": "foodbite-4150e",
+    "storage_bucket": "foodbite-4150e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509150642218:android:832bd7812f504463278353",
+        "android_client_info": {
+          "package_name": "com.elitecanyon.foodbite.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509150642218-psr57em9vclu37tnj74r909j508l5rui.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitecanyon.foodbite.driver",
+            "certificate_hash": "467e689cf22cbe44afc4c07369e2ff765870323d"
+          }
+        },
+        {
+          "client_id": "509150642218-taphklatjgqqrbvm07d7jurfjnrktlnj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitecanyon.foodbite.driver",
+            "certificate_hash": "4cf3eee41a583a40f177c51ed70ec811c32e636d"
+          }
+        },
+        {
+          "client_id": "509150642218-tm587d2nsgvm1qa5lfojg5j3cjtfiqhr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHSjGaF5y5qOoGikv6pbL7t_i0e9npBTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509150642218-d414l3fvuhdm74749p58i004ejess0kt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "509150642218-22206qpv90d8gaj6ipefjp48qec8qt32.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elitecanyon.foodbite.kitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509150642218:android:b5c3232d84c1c18b278353",
+        "android_client_info": {
+          "package_name": "com.elitecanyon.foodbite.kitchen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509150642218-4v0oh5uujem5g54malnhlgesukk8hn16.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitecanyon.foodbite.kitchen",
+            "certificate_hash": "b2f55d0cc799f4b7fde462982734a7f9b8cefa72"
+          }
+        },
+        {
+          "client_id": "509150642218-tm587d2nsgvm1qa5lfojg5j3cjtfiqhr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHSjGaF5y5qOoGikv6pbL7t_i0e9npBTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509150642218-d414l3fvuhdm74749p58i004ejess0kt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "509150642218-22206qpv90d8gaj6ipefjp48qec8qt32.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elitecanyon.foodbite.kitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509150642218:android:7a41f0c9932178e7278353",
+        "android_client_info": {
+          "package_name": "com.elitecanyon.foodbite.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509150642218-qkoh5d9pbhts6dbv6atn6g1qa2jpqibr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitecanyon.foodbite.user",
+            "certificate_hash": "d6b2238a803743a88cedae7169d5b50b611ec38f"
+          }
+        },
+        {
+          "client_id": "509150642218-uhubav75eo0hehbgjdueto24q4hrr0a9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitecanyon.foodbite.user",
+            "certificate_hash": "4324275ffdba53862426e23d06276c9391a09017"
+          }
+        },
+        {
+          "client_id": "509150642218-tm587d2nsgvm1qa5lfojg5j3cjtfiqhr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHSjGaF5y5qOoGikv6pbL7t_i0e9npBTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509150642218-d414l3fvuhdm74749p58i004ejess0kt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "509150642218-22206qpv90d8gaj6ipefjp48qec8qt32.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elitecanyon.foodbite.kitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509150642218:android:c346f2910ecdcaf8278353",
+        "android_client_info": {
+          "package_name": "com.elitecanyon.foodbite.vendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509150642218-7c6rpicqn7gr7893c1qm2fe27l3j56k6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitecanyon.foodbite.vendor",
+            "certificate_hash": "679cc831183b362e0ccc13cf0c2ca012d83254fd"
+          }
+        },
+        {
+          "client_id": "509150642218-sp5a4cqqm0tbmmmjuvl28qk8mlure6da.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitecanyon.foodbite.vendor",
+            "certificate_hash": "933bb2508c67b64271bec8ca8919bd500b32f806"
+          }
+        },
+        {
+          "client_id": "509150642218-tm587d2nsgvm1qa5lfojg5j3cjtfiqhr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHSjGaF5y5qOoGikv6pbL7t_i0e9npBTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509150642218-d414l3fvuhdm74749p58i004ejess0kt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "509150642218-22206qpv90d8gaj6ipefjp48qec8qt32.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elitecanyon.foodbite.kitchen"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509150642218:android:e2711afcbd618ab4278353",
+        "android_client_info": {
+          "package_name": "com.elitecanyon.foodbite.waiter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509150642218-sfh8vqul18t2lvfoi1hagiplmi0t2tk1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elitecanyon.foodbite.waiter",
+            "certificate_hash": "5ce6e25178858c32f8062b3825b6f8f80c4c3327"
+          }
+        },
+        {
+          "client_id": "509150642218-tm587d2nsgvm1qa5lfojg5j3cjtfiqhr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHSjGaF5y5qOoGikv6pbL7t_i0e9npBTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509150642218-d414l3fvuhdm74749p58i004ejess0kt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "509150642218-22206qpv90d8gaj6ipefjp48qec8qt32.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elitecanyon.foodbite.kitchen"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

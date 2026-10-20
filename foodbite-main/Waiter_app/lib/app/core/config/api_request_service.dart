@@ -1,0 +1,280 @@
+/*
+ * FoodBite – Multi Restaurant Food Delivery App
+ * (NodeJS, MongoDB, Angular & Flutter)
+ *
+ * Copyright © 2026 Elitecanyon InfoTech (https://www.elitecanyon.com/)
+ * Licensed under the Envato Market License.
+ *
+ * Unauthorized redistribution, resale, or publication
+ * of this source code on GitHub or any public repository
+ * is strictly prohibited.
+ *
+ * This file may contain embedded identifiers and watermarks
+ * for ownership verification and license enforcement.
+ */
+
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:waiter/app/core/config/api_endpoints.dart';
+import 'package:waiter/app/core/config/shared_pref_keys.dart';
+import 'package:waiter/app/env.dart';
+import 'package:waiter/app/services/shared_pref.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+class ApiRequestService {
+  Dio _dio = Dio();
+  static String baseUrl = Environments.apiBaseURL;
+  static int timeoutInSeconds = 30;
+  static int pageSize = 20;
+  final SharedPreferencesManager _sharedPreferencesManager = SharedPreferencesManager();
+
+  ApiRequestService() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        responseType: ResponseType.json,
+        contentType: 'application/json',
+        connectTimeout: Duration(seconds: timeoutInSeconds),
+        receiveTimeout: Duration(seconds: timeoutInSeconds),
+      ),
+    );
+    _dio.interceptors.add(
+      QueuedInterceptorsWrapper(
+        onRequest: (RequestOptions options, RequestInterceptorHandler handler) async {
+          String? authToken = await _sharedPreferencesManager.getString(SharedPreferencesKey.authKeys.authToken);
+          if (authToken != null && authToken.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $authToken';
+          }
+          return handler.next(options);
+        },
+        onResponse: (Response response, ResponseInterceptorHandler handler) {
+          return handler.next(response);
+        },
+        onError: (DioException error, ErrorInterceptorHandler handler) async {
+          String? authRefreshToken = await _sharedPreferencesManager.getString(SharedPreferencesKey.authKeys.authRefreshToken);
+
+          bool isRejected = false;
+          if (error.response?.statusCode != null && error.response?.statusCode == 401 && !error.requestOptions.path.contains('/auth/') && authRefreshToken != null && authRefreshToken.isNotEmpty) {
+            try {
+              Response refreshResponse = await _dio.post(ApiEndPoints.v1request.refreshToken, data: {'refreshToken': authRefreshToken});
+              if (refreshResponse.statusCode == 200) {
+                RefreshTokenModel data = RefreshTokenModel.fromJson(refreshResponse.data);
+                if (data.access!.token != null && data.refresh!.token != null && data.access!.token!.isNotEmpty && data.refresh!.token!.isNotEmpty) {
+                  await _sharedPreferencesManager.putString(SharedPreferencesKey.authKeys.authToken, data.access!.token!);
+                  await _sharedPreferencesManager.putString(SharedPreferencesKey.authKeys.authRefreshToken, data.refresh!.token!);
+                  final opts = Options(
+                    method: error.requestOptions.method,
+                    extra: error.requestOptions.extra,
+                    headers: error.requestOptions.headers,
+                    contentType: error.requestOptions.contentType,
+                    responseType: error.requestOptions.responseType,
+                    listFormat: error.requestOptions.listFormat,
+                  );
+
+                  final cloneReq = await _dio.request(error.requestOptions.path, options: opts, data: error.requestOptions.data, queryParameters: error.requestOptions.queryParameters);
+
+                  return handler.resolve(cloneReq);
+                } else {
+                  authFailed();
+                  isRejected = true;
+                  handler.reject(error);
+                }
+              } else {
+                authFailed();
+                isRejected = true;
+                handler.reject(error);
+              }
+            } catch (e, stacktrace) {
+              authFailed();
+              isRejected = true;
+              handler.reject(error);
+              if (!kIsWeb) {
+                FirebaseCrashlytics.instance.recordError(e, stacktrace);
+              }
+            }
+          } else if (error.response?.statusMessage != null) {
+            isRejected = true;
+            return handler.reject(error);
+          }
+          if (isRejected == false) {
+            return handler.next(error);
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> authFailed() async {
+    await _sharedPreferencesManager.clearKey(SharedPreferencesKey.authKeys.authRefreshToken);
+    await _sharedPreferencesManager.clearKey(SharedPreferencesKey.authKeys.authToken);
+    await _sharedPreferencesManager.clearKey(SharedPreferencesKey.authKeys.uid);
+  }
+
+  Future<DioApiResponse> get(String endPoint) async {
+    try {
+      final response = await _dio.get(endPoint);
+      return parseResponse(response);
+    } on DioException catch (e, stacktrace) {
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.recordError(e, stacktrace);
+      }
+      return parseResponse(e.response!);
+    }
+  }
+
+  Future<DioApiResponse> post(String endPoint, {dynamic body}) async {
+    try {
+      final response = await _dio.post(endPoint, data: body);
+      return parseResponse(response);
+    } on DioException catch (e, stacktrace) {
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.recordError(e, stacktrace);
+      }
+      return parseResponse(e.response!);
+    }
+  }
+
+  Future<DioApiResponse> delete(String endPoint) async {
+    try {
+      final response = await _dio.delete(endPoint);
+      return parseResponse(response);
+    } on DioException catch (e, stacktrace) {
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.recordError(e, stacktrace);
+      }
+      return parseResponse(e.response!);
+    }
+  }
+
+  Future<DioApiResponse> patch(String endPoint, {dynamic body}) async {
+    try {
+      final response = await _dio.patch(endPoint, data: body);
+      return parseResponse(response);
+    } on DioException catch (e, stacktrace) {
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.recordError(e, stacktrace);
+      }
+      return parseResponse(e.response!);
+    }
+  }
+
+  Future<DioApiResponse> uploadImageFile(String endPoint, String uid, XFile file) async {
+    try {
+      String fileName = file.path.split('/').last;
+      FormData formData = FormData.fromMap({"fileName": await MultipartFile.fromFile(file.path, filename: fileName, contentType: MediaType('image', 'jpeg')), "uid": uid});
+      final response = await _dio.post(endPoint, data: formData);
+      return parseResponse(response);
+    } on DioException catch (e, stacktrace) {
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.recordError(e, stacktrace);
+      }
+      return parseResponse(e.response!);
+    }
+  }
+
+  DioApiResponse parseResponse(Response res) {
+    DioApiResponse response = DioApiResponse(res);
+    return response;
+  }
+}
+
+class DioApiResponse {
+  final Response raw;
+  NetErrorType errorType = NetErrorType.none;
+  bool get success => errorType == NetErrorType.none;
+  String get body => jsonEncode(raw.data);
+  Headers get headers => raw.headers;
+  int? get statusCode => raw.statusCode;
+
+  DioApiResponse(this.raw) {
+    if (raw.statusCode! >= 200 && raw.statusCode! <= 299) {
+      errorType = NetErrorType.none;
+    } else if (raw.statusCode! >= 500 && raw.statusCode! < 600) {
+      errorType = NetErrorType.timedOut;
+    } else if (raw.statusCode! >= 400 && raw.statusCode! < 500) {
+      errorType = NetErrorType.denied;
+    } else {
+      errorType = NetErrorType.unknown;
+    }
+  }
+}
+
+enum NetErrorType { none, disconnected, timedOut, denied, unknown }
+
+class RefreshTokenModel {
+  Access? access;
+  Access? refresh;
+
+  RefreshTokenModel({this.access, this.refresh});
+
+  RefreshTokenModel.fromJson(Map<String, dynamic> json) {
+    access = json['access'] != null ? Access.fromJson(json['access']) : null;
+    refresh = json['refresh'] != null ? Access.fromJson(json['refresh']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (access != null) {
+      data['access'] = access!.toJson();
+    }
+    if (refresh != null) {
+      data['refresh'] = refresh!.toJson();
+    }
+    return data;
+  }
+}
+
+class Access {
+  String? token;
+  String? expires;
+
+  Access({this.token, this.expires});
+
+  Access.fromJson(Map<String, dynamic> json) {
+    token = json['token'];
+    expires = json['expires'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['token'] = token;
+    data['expires'] = expires;
+    return data;
+  }
+}
+
+class ApiExternalRequestService {
+  Dio _dio = Dio();
+  static int timeoutInSeconds = 30;
+  ApiExternalRequestService() {
+    _dio = Dio(
+      BaseOptions(
+        responseType: ResponseType.json,
+        contentType: 'application/json',
+        connectTimeout: Duration(seconds: timeoutInSeconds),
+        receiveTimeout: Duration(seconds: timeoutInSeconds),
+      ),
+    );
+  }
+
+  Future<DioApiResponse> getExternal(String endPoint) async {
+    try {
+      final response = await _dio.get(endPoint);
+      return parseResponse(response);
+    } on DioException catch (e, stacktrace) {
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.recordError(e, stacktrace);
+      }
+      return parseResponse(e.response!);
+    }
+  }
+
+  DioApiResponse parseResponse(Response res) {
+    DioApiResponse response = DioApiResponse(res);
+    return response;
+  }
+}

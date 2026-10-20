@@ -1,0 +1,41 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "foodbite-4150e",
+          "appId": "1:509150642218:android:7a41f0c9932178e7278353",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "foodbite-4150e",
+          "appId": "1:509150642218:ios:aea55b67038704f2278353",
+          "uploadDebugSymbols": true,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "foodbite-4150e",
+          "appId": "1:509150642218:ios:aea55b67038704f2278353",
+          "uploadDebugSymbols": true,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "foodbite-4150e",
+          "configurations": {
+            "android": "1:509150642218:android:7a41f0c9932178e7278353",
+            "ios": "1:509150642218:ios:aea55b67038704f2278353",
+            "macos": "1:509150642218:ios:aea55b67038704f2278353",
+            "web": "1:509150642218:web:2d255358f8be1375278353",
+            "windows": "1:509150642218:web:e32867e748370ac1278353"
+          }
+        }
+      }
+    }
+  }
+}

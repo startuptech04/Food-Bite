@@ -1,0 +1,355 @@
+<mat-card class="mat-card-top chat-app cardWithShadow overflow-hidden">
+  <mat-sidenav-container [ngClass]="{
+      'side-panel-opened': sidePanelOpened,
+      'side-panel-closed': !sidePanelOpened
+    }">
+    <!-- ---------------------------------------------------- -->
+    <!-- sidebar -->
+    <!-- ---------------------------------------------------- -->
+    <mat-sidenav #chatnav [mode]="isOver() ? 'over' : 'side'" [opened]="!isOver()" (open)="sidePanelOpened = true"
+      (close)="sidePanelOpened = false" class="shadow-none b-r-1">
+      <ng-scrollbar class="position-relative" style="height: 100%">
+
+        <div class="d-flex align-items-center m-x-24 m-t-20 m-b-0">
+          {{util.appTranslate('support_information')}}
+        </div>
+
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-x-24 m-t-10 m-b-10">
+          @if (supportFor == 'orders') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('support_for_orders')}}
+          </h6>
+          }
+          @if (supportFor == 'dining') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('support_for_dining_booking')}}
+          </h6>
+          }
+          @if (supportFor == 'tiffin_subscription') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('support_for_tiffin_subscription')}}
+          </h6>
+          }
+          @if (supportFor == 'complaints') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('support_for_complaints')}}
+          </h6>
+          }
+          @if (supportFor == 'reports') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('support_for_reports')}}
+          </h6>
+          }
+          @if (supportFor == 'restaurant_complaints') {
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('support_for_restaurant_complaints')}}
+          </h6>
+          }
+          <p class="mat-body-1 f-s-12">
+            #{{supportForId | uppercase}}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('th_date')}}: {{supportStarted}}
+          </p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        @if (supportFor == 'orders') {
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-x-24 m-t-10 m-b-10 cursor-pointer" (click)="onOrderDetail()">
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('order_no')}}: {{orderNo}}
+          </h6>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('order_total')}}: {{util.priceFormat(orderGrandTotal)}}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('order_type')}}: {{orderType}}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('order_status')}}:
+            <span
+              class="bg-light-{{getStatusColor(orderStatus)}} text-{{getStatusColor(orderStatus)}} rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{ util.appTranslate(orderStatus) }}
+            </span>
+          </p>
+        </div>
+        }
+
+        @if (supportFor == 'dining') {
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-x-24 m-t-10 m-b-10 cursor-pointer" (click)="onBookingDetail()">
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('booking_id')}}: {{util.refId(bookingId) | uppercase}}
+          </h6>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('booking_total')}}: {{util.priceFormat(bookingGrandTotal)}}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('booking_status')}}:
+            <span
+              class="bg-light-{{getBookingStatusColor(bookingStatus)}} text-{{getBookingStatusColor(bookingStatus)}} rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{ util.appTranslate(bookingStatus) }}
+            </span>
+          </p>
+        </div>
+        }
+
+        @if (supportFor == 'tiffin_subscription') {
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-x-24 m-t-10 m-b-10 cursor-pointer"
+          (click)="onTiffinPurchaseDetail()">
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('purchase_id')}}: {{util.refId(packageId) | uppercase}}
+          </h6>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('purchase_total')}}: {{util.priceFormat(packageGrandTotal)}}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('purchase_status')}}:
+            <span
+              class="bg-light-{{getPackageStatusColor(packageStatus)}} text-{{getPackageStatusColor(packageStatus)}} rounded f-w-600 p-6 p-y-4 f-s-12">
+              {{ util.appTranslate(packageStatus) }}
+            </span>
+          </p>
+        </div>
+        }
+
+        @if (supportFor == 'complaints' || supportFor == 'restaurant_complaints') {
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-x-24 m-t-10 m-b-10">
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('complaint_id')}}: {{util.refId(complaintId) | uppercase}}
+          </h6>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('complaint_with')}}: {{util.appTranslate(complaintIssueWith)}}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('title')}}: {{complaintTitle}}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('brief')}}: {{complaintBrief}}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('th_reason')}}: {{complaintReason}}
+          </p>
+        </div>
+        }
+
+        @if (supportFor == 'reports') {
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-x-24 m-t-10 m-b-10">
+          <h6 class="mat-subtitle-1 f-s-16 f-w-600">
+            {{util.appTranslate('report_id')}}: {{util.refId(reportId) | uppercase}}
+          </h6>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('th_reason')}}: {{ reportReason }}
+          </p>
+          <p class="mat-body-1 f-s-12">
+            {{util.appTranslate('message')}}: {{ reportMessage }}
+          </p>
+        </div>
+        }
+
+        <mat-divider></mat-divider>
+
+        <div class="d-flex align-items-center m-x-24 m-t-20 m-b-0">
+          {{util.appTranslate('customer_information')}}
+        </div>
+
+        <div class="d-flex align-items-center p-24">
+          <img [src]="api.mediaUrl+userImage" onError="this.src='assets/images/onerror.png'" class="rounded" width="60"
+            height="60" />
+          <div class="m-l-16">
+            <h4 class="mat-subtitle-1 f-s-16 f-w-600">{{userFirstName +' '+ userLastName}}</h4>
+            <a href="mailto:{{userEmail}}" class="link">{{userEmail}}</a> <br>
+            <a href="tel:{{userMobile}}" class="link">{{userMobile}}</a>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        @if (haveRestaurantInfo) {
+        <div class="d-flex align-items-center m-x-24 m-t-20 m-b-0">
+          {{util.appTranslate('restaurant_information')}}
+        </div>
+        }
+
+        @if (haveRestaurantInfo) {
+        <div class="d-flex align-items-start p-24">
+          <img [src]="api.mediaUrl+restaurantImage" onError="this.src='assets/images/onerror.png'" class="rounded"
+            width="60" height="60" />
+          <div class="m-l-16">
+            <h4 class="mat-subtitle-1 f-s-16 f-w-600">{{restaurantName}} ({{restaurantOwnerType == 'vendor' ?
+              util.appTranslate('restaurant') : util.appTranslate('outlet')}}) </h4>
+            <a href="mailto:{{restaurantOwnerEmail}}" class="link">{{restaurantOwnerEmail}}</a> <br>
+            <a href="tel:{{restaurantOwnerPhone}}" class="link">{{restaurantOwnerPhone}}</a>
+          </div>
+        </div>
+        }
+
+        <mat-nav-list class="chat-listing">
+          @if (!isChatMessageLoaded) {
+          <div>
+            @for (item of [1,2,3,4,5]; track $index) {
+            <mat-list-item role="listitem" lines="2">
+              <div class="d-flex align-items-center p-x-16 p-b-4 h-100" matListItemTitle>
+                <img src="assets/images/onerror.png" alt="" width="42" height="42" class="rounded-circle" />
+                <div class="m-l-16 w-100">
+                  <div class="f-w-600 mat-subtitle-1 f-s-16 lh-sm w-100">
+                    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                  </div>
+                  <div class="f-s-14 m-t-4 m-b-0 w-100">
+                    <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                  </div>
+                </div>
+              </div>
+            </mat-list-item>
+            }
+          </div>
+          }
+        </mat-nav-list>
+      </ng-scrollbar>
+    </mat-sidenav>
+    <!-- ------------------------------------------- -->
+    <!-- details -->
+    <!-- ------------------------------------------- -->
+    <mat-toolbar class="no-shadow chat-right-panel bg-white d-flex align-items-center p-y-8 b-b-1">
+      <button (click)="chatnav.toggle()" class="m-r-10" mat-icon-button>
+        <mat-icon>short_text</mat-icon>
+      </button>
+      <div class="d-flex align-items-center">
+        <img [src]="api.mediaUrl+userImage" width="40" height="40" class="rounded-circle"
+          onError="this.src='assets/images/onerror.png'" />
+        <div class="mat-subtitle-1 f-s-16 f-w-600 m-b-0 m-l-16">
+          {{userFirstName +' '+ userLastName }}
+          <br>
+          @if (supportFor == 'orders') {
+          <h6 class="mat-body-1 f-s-12">
+            {{util.appTranslate('orders_support')}}
+          </h6>
+          }
+          @if (supportFor == 'dining') {
+          <h6 class="mat-body-1 f-s-12">
+            {{util.appTranslate('dining_booking_support')}}
+          </h6>
+          }
+          @if (supportFor == 'tiffin_subscription') {
+          <h6 class="mat-body-1 f-s-12">
+            {{util.appTranslate('tiffin_subscription_support')}}
+          </h6>
+          }
+          @if (supportFor == 'complaints') {
+          <h6 class="mat-body-1 f-s-12">
+            {{util.appTranslate('complaints_support')}}
+          </h6>
+          }
+          @if (supportFor == 'reports') {
+          <h6 class="mat-body-1 f-s-12">
+            {{util.appTranslate('reports_support')}}
+          </h6>
+          }
+        </div>
+      </div>
+      <button [matMenuTriggerFor]="moredd" class="m-l-auto" mat-icon-button>
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #moredd="matMenu" x-position="before" class="cardWithShadow">
+        <button mat-menu-item (click)="exportSupportChat()">{{util.appTranslate('send_exported_chat')}}</button>
+        <button mat-menu-item (click)="resolveSupportChat()">{{util.appTranslate('mark_as_resolved')}}</button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <!-- ------------------------------------------- -->
+    <!-- chat content -->
+    <!-- ------------------------------------------- -->
+    <ng-scrollbar style="height: calc(100vh - 390px)" class="position-relative" #chatMessageScroll>
+      @if (loadMoreChats) {
+      <div class="p-24">
+        <mat-spinner [diameter]="30" style="margin: 0 auto;"></mat-spinner>
+      </div>
+      }
+      <mat-card-content class="chat-middle-box p-24">
+        @if (!isChatMessageLoaded) {
+        <div>
+          @for (item of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+          <ng-container>
+            @if (item % 2 == 0) {
+            <div class="chat-list odd">
+              <div class="chat-message m-b-15 w-100">
+                <div class="chat-block bg-primary p-10 rounded d-flex align-items-center">
+                  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                </div>
+              </div>
+            </div>
+            } @else {
+            <ng-container *ngTemplateOutlet="evenblock"></ng-container>
+            }
+            <ng-template #evenblock>
+              <div class="chat-message m-b-15">
+                <div
+                  class="chat-block bg-light-secondary lh-md p-10 rounded d-flex align-items-center mat-subheading-1 f-w-400 m-b-0">
+                  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          }
+        </div>
+        }
+        @if (isChatMessageLoaded) {
+        <div id="chatBox" (scroll)="onScroll($event)">
+          @for (chats of chatMessages; track $index) {
+          <ng-container>
+            @if (uid != chats.senderId && chats.sender.role != 'supportTeam') {
+            <div class="chat-list odd">
+              <div class="chat-message m-b-15">
+                <div class="chat-block bg-primary p-10 rounded d-flex align-items-center justify-content-center">
+                  <span>
+                    <img [src]="api.mediaUrl + chats.sender.image" onError="this.src='assets/images/onerror.png'"
+                      class="rounded-circle" width="30" height="30" />
+                  </span>
+                  <span class="m-l-16 mat-subheading-1 m-b-0 f-w-400 lh-md">
+                    {{ chats.message }}
+                  </span>
+                </div>
+                <p class="chat-date text-muted mat-h5 f-s-12 m-t-5 m-b-0">
+                  {{ getDateFormatted(chats.createdAt) }}
+                </p>
+              </div>
+            </div>
+            } @else {
+            <ng-container *ngTemplateOutlet="evenblock"></ng-container>
+            }
+
+            <ng-template #evenblock>
+              <div class="chat-list even">
+                <div class="chat-message m-b-15">
+                  <div
+                    class="chat-block bg-light-secondary lh-md p-10 rounded d-flex align-items-center mat-subheading-1 f-w-400 m-b-0">
+                    {{chats.message}}
+                  </div>
+                  <p class="mat-body-1 f-s-12">
+                    {{ chats.sender.firstName +' '+ chats.sender.lastName }}
+                  </p>
+                  <p class="chat-date text-muted mat-h5 m-0">
+                    {{ getDateFormatted(chats.createdAt) }}
+                  </p>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+          }
+        </div>
+        }
+      </mat-card-content>
+    </ng-scrollbar>
+    <mat-divider></mat-divider>
+    <div class="p-t-20 p-l-30 p-r-30">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>{{util.appTranslate('message')}}</mat-label>
+        <input matInput [placeholder]="util.appTranslate('send_message')" [(ngModel)]="msg" #myInput
+          (keyup.enter)="sendMessage()" />
+        <button mat-icon-button matSuffix color="primary" (click)="sendMessage()">
+          <mat-icon>send</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </mat-sidenav-container>
+</mat-card>
